@@ -16,7 +16,7 @@ import javax.swing.Timer;
 
 /*
  * This class is used for creating the actual board of the Pacman
- * We are reading the Pacman matrix from file and then initializing the board accordingly.
+ * We received Pacman matrix from file and now we initialize the board accordingly.
  * 
  * The matrix values : 
  * 0 -> blocks inside the Pacman area.
@@ -97,11 +97,11 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 		loadHearts();
 		loadCeckCollision();
 
-		// pacman
+		// Pacman
 		PacmanControll pac = new PacmanControll(corX, corY, BLOCK_SIZE, this, points);
 		Thread thread = new Thread(pac);
 		thread.start();
-		// listening to events by the pacman
+		// listening to events by the Pacman
 		addKeyListener(pac);
 
 		// score label
@@ -112,7 +112,8 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 		setFocusable(true);
 		setPreferredSize(new Dimension(SCREEN_SIZE+ BLOCK_SIZE, SCREEN_SIZE + BLOCK_SIZE*2));
 	}
-
+	
+	// load hearts (set the heart images, adding to the array and setting amount of lives)
 	private void loadHearts() {
 		hearts = new ArrayList<Image>();
 		lives =3;
@@ -125,7 +126,8 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 		}
 
 	}
-	// pacman image
+	
+	// Pacman image
 	private void loadPacman() {
 		ImageIcon player = new ImageIcon("Images/pacman.png");
 		pacman = player.getImage();
@@ -133,6 +135,7 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 	}
 
 
+	// initializing the score label - the number of points the Pacman collect will appear in the level
 	private void setScoreLabel() {
 		scoreCounter=0;
 		this.setLayout(null); // in order to control the layout location
@@ -145,7 +148,9 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 		// adding the label to the panel
 		this.add(score);
 	}
+	
 
+	// function that returns a random valid position on the screen (in order to place the ghosts)
 	public Point randomPos() {
 		// random points for the patrol.
 		int x =0;
@@ -155,16 +160,18 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 			x = (int) (Math.random() * PacmanBoard.MATRIX_SIZE);
 			y = (int) (Math.random() * PacmanBoard.MATRIX_SIZE);
 			random = points[x][y];
-		} while(points[x][y].isWalkable()== false);
-		System.out.println(x + " " + y);
+		} while(points[x][y].isWalkable()== false); // continue random until we receive a valid position
+		
 		return random;
 	}
 
 
-	// ghosts image and threads
+	// ghosts image & threads
 	private void loadGhosts() {
 
+		// which image to load
 		String [] names = {"blueGhost.png", "blueGhost.png", "pinkGhost.png","blueGhost.png","pinkGhost.png"};
+		// which behavior each ghost will receive
 		ChaseBehaviour [] chase = {new ChasingNearBy(), new Patrol(), new Patrol(),new ChasingBFS(),new ChasingNearBy()};
 		for (int i = 0; i < iid.length; i++) {
 			iid[i] = new ImageIcon("Images/"+names[i]);
@@ -177,13 +184,15 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 			thread.start();
 		}
 	}
-	
 
+
+	// initializing the inner class in order to check our Pacman and ghost collision
 	private void loadCeckCollision() {
 		Thread thread = new Thread(new collisonCheck());
 		thread.start();
 	}
 
+	// responsible for drawing the Pacman board
 	private void drawBoard(Graphics2D g2d) {
 		// variable for the index of the matrix board
 		short i = 0;
@@ -235,6 +244,7 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 		}
 	}
 
+	// initializing our points matrix according to 0\2 (isWalkable), and converting to 2D-array
 	private void initPoints() {
 
 		for (int row = 0; row < points.length; row++) {
@@ -267,15 +277,6 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 
 		// drawing hearts
 		drawHearts(g);
-
-		//		// draw end game :
-		//		if(lives==0) {
-		//			lives=-1; // in order to deny re-entrance 
-		//			JOptionPane.showMessageDialog(this,"Game-Over");
-		//			//this.setVisible(false);
-		//			//lives=3;
-		//		}
-
 	}
 
 
@@ -320,7 +321,6 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 	}
 
 	// if we have more lives, we remove one, otherwise, game is over
-
 	public void removeHeart() {
 		if(hearts.size()>0)
 			hearts.remove(hearts.size()-1);
@@ -340,8 +340,6 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 					//System.out.println("");
 					if (ghostClass[i].getCorX() == corX && ghostClass[i].getCorY()==corY)
 					{
-						// A Collision!
-						System.out.println("Collision");
 						lives--;
 						removeHeart();
 						try {
@@ -354,7 +352,5 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 				}
 			}	
 		}
-
 	}
-
 }

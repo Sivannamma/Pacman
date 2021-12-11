@@ -10,13 +10,14 @@ public class Gui  extends JFrame {
 
 	// constructor : 
 	Gui() {
-		
 		initWindow(); // calling the initWindow(); function in order to start our window.
 	}
 
 	private void initWindow() {
+		// Class in order to read the board that is given
 		ReadFromFile g = new ReadFromFile("file.txt");
 		int [] board = g.convertFileToIntArray();
+		
 		int cellSize = 24;
 		int matSize = (int)(Math.sqrt(board.length));
 		add(new PacmanBoard(cellSize,matSize, board)); // calling the PacmanBoard class

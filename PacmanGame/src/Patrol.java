@@ -14,7 +14,7 @@ public class Patrol implements ChaseBehaviour {
 	@Override
 	public ArrayList<Point> chase(Point start, IGraph graph) {
 		points = (Point[][]) graph.getGraph();
-		// only first entrence because we wan't to random only once the destination position
+		// only first entrance because we wan't to random only once the destination position
 		if(firstEntrence) {
 			firstEntrence = false;
 			startPosition = start;

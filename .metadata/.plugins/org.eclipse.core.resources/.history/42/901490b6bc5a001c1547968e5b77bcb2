@@ -1,0 +1,38 @@
+
+public class Point {
+	private int indRow; // row index in the matrix
+	private int indCol; // column index in the matrix
+	private boolean isWalkable; // variable to indicate if the player can walk on this cell (if it is a block or not)
+	private int weight;
+	// constructor : 
+	public Point(int row, int col, boolean isWalkable) {
+		this.indRow = row;
+		this.indCol = col;
+		this.isWalkable = isWalkable;
+	}
+
+	// getters and setters :
+	public int getIndRow() {
+		return indRow;
+	}
+
+	public void setIndRow(int indRow) {
+		this.indRow = indRow;
+	}
+
+	public int getIndCol() {
+		return indCol;
+	}
+
+	public void setIndCol(int indCol) {
+		this.indCol = indCol;
+	}
+
+	public boolean isWalkable() {
+		return isWalkable;
+	}
+
+	public void setWalkable(boolean isWalkable) {
+		this.isWalkable = isWalkable;
+	}
+}

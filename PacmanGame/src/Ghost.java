@@ -47,8 +47,7 @@ public class Ghost implements Runnable{
 		return corY;
 	}
 
-	private void move() throws InterruptedException {
-		
+	private void move() throws InterruptedException {	
 		if(path==null)
 			return;
 		
