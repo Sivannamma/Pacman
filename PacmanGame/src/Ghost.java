@@ -1,3 +1,5 @@
+import java.awt.Image;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 public class Ghost implements Runnable{
@@ -5,9 +7,6 @@ public class Ghost implements Runnable{
 	// ghost coordinates
 	private int corX;
 	private int corY;
-
-	private static int pacX;
-	private static int pacY;
 	
 	private ChaseBehaviour chase; // the behavior this ghost received (which function to perform)
 	private  IGraph graph; 
@@ -29,7 +28,6 @@ public class Ghost implements Runnable{
 	public void run() {
 		try {
 			while (true) {
-				isOnPlayer();
 				Point ghost = points[(corY-7)/PacmanBoard.BLOCK_SIZE][(corX-7)/PacmanBoard.BLOCK_SIZE];
 				path = chase.chase(ghost, graph);			
 				move();
@@ -57,20 +55,8 @@ public class Ghost implements Runnable{
 		for (int i = 0; i < path.size(); i++) {
 			this.corY = path.get(i).getIndRow() * PacmanBoard.BLOCK_SIZE + 7;
 			this.corX = path.get(i).getIndCol() * PacmanBoard.BLOCK_SIZE + 7;
-			isOnPlayer();
 			Thread.sleep(speed);
 		}
 	}
-	
-	// getting the exact coordinates of the Pacman
-	public static void setCoordinates(int corX, int corY) {
-		pacX = corX;
-		pacY = corY;
-	}
 
-	
-	private void isOnPlayer() {
-		if(corX==pacX && corY==pacY)
-			PacmanBoard.removeHeart();
-	}
 }

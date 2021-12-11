@@ -6,11 +6,11 @@ public class Patrol implements ChaseBehaviour {
 	private Point startPosition;
 	private Point endPosition;
 	private Boolean firstEntrence;
-	
+
 	Patrol(){
 		firstEntrence = true;
 	}
-	
+
 	@Override
 	public ArrayList<Point> chase(Point start, IGraph graph) {
 		points = (Point[][]) graph.getGraph();
@@ -28,14 +28,21 @@ public class Patrol implements ChaseBehaviour {
 		return new BFS(start , endPosition , graph).performBFS();
 	}
 
+
+
 	@Override
-    public Point destination() {
+	public Point destination() {
 		// random points for the patrol.
-        int endX = (int) (Math.random() * PacmanBoard.MATRIX_SIZE);
-        int startX = (int) (Math.random() * PacmanBoard.MATRIX_SIZE);
-        Point end = points[startX][endX];
-        return end;
-    }
+		int endX =0;
+		int startY=0;
+		Point random = points[startY][endX];
+		do {
+			endX = (int) (Math.random() * PacmanBoard.MATRIX_SIZE);
+			startY = (int) (Math.random() * PacmanBoard.MATRIX_SIZE);
+			random = points[startY][endX];
+		} while(points[startY][endX].isWalkable() == false);
+		return random;
+	}
 
 
 }

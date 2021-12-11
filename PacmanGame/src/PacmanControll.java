@@ -25,9 +25,9 @@ public class PacmanControll extends KeyAdapter implements Runnable{
 	// constructor : 
 	public PacmanControll(int corX, int corY , int cellSize, MovementConnecter pacmanBoard, Point[][] graph) { // the coordinates of the player in the beggining
 		this.corX= corX;
-		this.corY=corY;
-		this.cellSize=cellSize;
-		this.pacmanBoard = pacmanBoard;
+		this.corY=corY;		
+		this.cellSize=cellSize;		
+		this.pacmanBoard = pacmanBoard;		
 		this.points = graph;
 		this.graph = new PacmanGraph(graph);
 	}
@@ -38,8 +38,11 @@ public class PacmanControll extends KeyAdapter implements Runnable{
 		try {
 			while (true) {
 				
+				// we get the current location
 				int locX =(this.corX-7)/this.cellSize;
 				int locY =(this.corY-7)/this.cellSize;
+				
+				// we check the neighbors in order to determine which direction we can move
 				HashMap<String, Point> hm = graph.neighbors(points[locY][locX]);
 				
 				
@@ -97,7 +100,6 @@ public class PacmanControll extends KeyAdapter implements Runnable{
 				// setting the right coordinates of the Pacman, inside the ghost class
 				ChasingBFS.setCoordinates(corX, corY);
 				ChasingNearBy.setCoordinates(corX, corY);
-				Ghost.setCoordinates(corX, corY);
 				Thread.sleep(100);
 
 			}
@@ -120,27 +122,20 @@ public class PacmanControll extends KeyAdapter implements Runnable{
 
 	}
 
+	// To handle key releasing : 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		//	        wasUp = false;
-		//	        wasDown = false;
-		//	        wasRight = false;
-		//	        wasLeft = false;
 		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 			left = false;
-			// wasLeft = true;
 		}
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 			right = false;
-			//  wasRight = true;
 		}
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
 			up = false;
-			// wasUp = true;
 		}
 		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 			down = false;
-			// wasDown = true;
 		}
 	}
 }

@@ -4,15 +4,15 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
 
 /*
  * This class is used for creating the actual board of the Pacman
@@ -20,15 +20,13 @@ import javax.swing.Timer;
  * 
  * The matrix values : 
  * 0 -> blocks inside the Pacman area.
- * 1 -> the outline's of the game (the board lines)
  * 2 -> where the player can walk (also where we can place points to collect)
  */
 public class PacmanBoard extends JPanel implements ActionListener, MovementConnecter {
 
 	private static final long serialVersionUID = 1L;
-
 	// offset for the borders
-	private final int bourderOffset = 25;
+	private final int borderOffset = 25;
 	// variable for the block size (how big each cell is)
 	public static int BLOCK_SIZE;
 	// variable for the matrix size
@@ -40,10 +38,15 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 
 	private Image pacman;
 
-	private Image [] ghost = new Image [2];
-	private Ghost [] ghostClass = new Ghost [2];
+	// ghosts
+	private ImageIcon iid [] = new ImageIcon[5];
+	private Image [] ghost = new Image [5];
+	private Ghost [] ghostClass = new Ghost [5];
 
-	private int corX, corY;
+	// Pacman coordinates 
+	private volatile int corX, corY; // volatile in order that the class that responsible for the collision will be able to see the variables and the changes 
+
+	// variable in order to make the actionPerformed that calls repaint to work
 	private Timer timer;
 	private int DELAY = 80;
 
@@ -52,103 +55,22 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 	// points matrix
 	private Point[][] points;
 
-	// score for the pacman (how many points collected)
+	// score for the Pacman (how many points collected)
 	private JLabel score;
 	private int scoreCounter;
 
 	// hearts :
 	private static ArrayList<Image> hearts;
-	private static int lives;
+	private int lives;
 
-	private final short board[] = {
-			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-			2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2,
-			2, 2, 2, 2, 2, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2,
-			2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2,
-			2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2,
-			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-
-	};
-
-	//	private final short board[] = {
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	//			2, 2, 2, 2,
-	//
-	//	};
+	private final int board[];
 
 	// constructor :
-	PacmanBoard(int blockSize, int matrixSize) {
+	PacmanBoard(int blockSize, int matrixSize, int[] board) {
 		// initializing :
 		BLOCK_SIZE = blockSize;
 		MATRIX_SIZE = matrixSize;
-
+		this.board=board;
 		// (valued as size of the matrix multiply by cell size)
 		SCREEN_SIZE = BLOCK_SIZE * MATRIX_SIZE;
 
@@ -173,6 +95,7 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 		loadPacman();
 		loadGhosts();
 		loadHearts();
+		loadCeckCollision();
 
 		// pacman
 		PacmanControll pac = new PacmanControll(corX, corY, BLOCK_SIZE, this, points);
@@ -204,8 +127,8 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 	}
 	// pacman image
 	private void loadPacman() {
-		ImageIcon iid = new ImageIcon("Images/pacman.png");
-		pacman = iid.getImage();
+		ImageIcon player = new ImageIcon("Images/pacman.png");
+		pacman = player.getImage();
 		pacman = pacman.getScaledInstance(BLOCK_SIZE, BLOCK_SIZE, Image.SCALE_DEFAULT);
 	}
 
@@ -222,23 +145,43 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 		// adding the label to the panel
 		this.add(score);
 	}
+
+	public Point randomPos() {
+		// random points for the patrol.
+		int x =0;
+		int y=0;
+		Point random = points[y][x];
+		do {
+			x = (int) (Math.random() * PacmanBoard.MATRIX_SIZE);
+			y = (int) (Math.random() * PacmanBoard.MATRIX_SIZE);
+			random = points[x][y];
+		} while(points[x][y].isWalkable()== false);
+		System.out.println(x + " " + y);
+		return random;
+	}
+
+
 	// ghosts image and threads
 	private void loadGhosts() {
-		ImageIcon iid = new ImageIcon("Images/ghost.png");
-		ghost[0] = iid.getImage();
-		ghost[0] = ghost[0].getScaledInstance(BLOCK_SIZE, BLOCK_SIZE, Image.SCALE_DEFAULT);
 
-		ghostClass[0] = new Ghost(76, 175, new ChasingBFS(), graph, 200);
-		Thread thread = new Thread(ghostClass[0]);
+		String [] names = {"blueGhost.png", "blueGhost.png", "pinkGhost.png","blueGhost.png","pinkGhost.png"};
+		ChaseBehaviour [] chase = {new ChasingNearBy(), new Patrol(), new Patrol(),new ChasingBFS(),new ChasingNearBy()};
+		for (int i = 0; i < iid.length; i++) {
+			iid[i] = new ImageIcon("Images/"+names[i]);
+			ghost[i] = iid[i].getImage();
+			ghost[i] = ghost[i].getScaledInstance(BLOCK_SIZE, BLOCK_SIZE, Image.SCALE_DEFAULT);
+
+			Point pos =randomPos();
+			ghostClass[i] = new Ghost(pos.getIndCol()*BLOCK_SIZE +7 , pos.getIndRow()*BLOCK_SIZE +7 , chase[i], graph, 200);
+			Thread thread = new Thread(ghostClass[i]);
+			thread.start();
+		}
+	}
+	
+
+	private void loadCeckCollision() {
+		Thread thread = new Thread(new collisonCheck());
 		thread.start();
-
-		ImageIcon iid2 = new ImageIcon("Images/pinkGhost.png");
-		ghost[1] = iid2.getImage();
-		ghost[1] = ghost[1].getScaledInstance(BLOCK_SIZE, BLOCK_SIZE, Image.SCALE_DEFAULT);
-
-		ghostClass[1] = new Ghost(127, 151, new Patrol(), graph, 200);
-		Thread thread2 = new Thread(ghostClass[1]);
-		thread2.start();
 	}
 
 	private void drawBoard(Graphics2D g2d) {
@@ -261,7 +204,7 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 				}
 				// drawing lines vertical lines :
 				if (x == SCREEN_SIZE - BLOCK_SIZE) {
-					g2d.drawLine(x + bourderOffset + pointsOffset, y + pointsOffset, x + bourderOffset + pointsOffset,
+					g2d.drawLine(x + borderOffset + pointsOffset, y + pointsOffset, x + borderOffset + pointsOffset,
 							y + BLOCK_SIZE - 1 + pointsOffset);
 				}
 				// drawing lines horizontal lines :
@@ -271,8 +214,8 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 				}
 				// drawing lines horizontal lines :
 				if (y == SCREEN_SIZE - BLOCK_SIZE) {
-					g2d.drawLine(x + pointsOffset, y + bourderOffset + pointsOffset, x + BLOCK_SIZE - 1 + pointsOffset,
-							y + bourderOffset + pointsOffset);
+					g2d.drawLine(x + pointsOffset, y + borderOffset + pointsOffset, x + BLOCK_SIZE - 1 + pointsOffset,
+							y + borderOffset + pointsOffset);
 				}
 				// we need to fill block ( where the player cannot walk)
 				if (board[i] == 0) {
@@ -309,10 +252,48 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 		super.paintComponent(g);
 
 		Graphics2D graphicComponent = (Graphics2D) g;
+
+		// drawing the board
 		drawBoard(graphicComponent);
-		//drawing the pacman
+
+		// drawing the pacman
 		g.drawImage(pacman, corX, corY, this);
 
+		// drawing the score and checking if there is a point to collect
+		drawPoints(g);
+
+		// drawing ghosts
+		drawGhost(g);
+
+		// drawing hearts
+		drawHearts(g);
+
+		//		// draw end game :
+		//		if(lives==0) {
+		//			lives=-1; // in order to deny re-entrance 
+		//			JOptionPane.showMessageDialog(this,"Game-Over");
+		//			//this.setVisible(false);
+		//			//lives=3;
+		//		}
+
+	}
+
+
+	private void drawGhost(Graphics g) {
+		for (int i = 0; i < ghost.length; i++) {
+			g.drawImage(ghost[i], ghostClass[i].getCorX(), ghostClass[i].getCorY(), this);
+		}
+	}
+
+	private void drawHearts(Graphics g) {
+		int heartOffset =pointsOffset*3;
+
+		for (int i = 0; i < hearts.size(); i++) {
+			g.drawImage(hearts.get(i),(i+7) *BLOCK_SIZE, SCREEN_SIZE+ heartOffset, this);
+		}
+	}
+
+	private void drawPoints(Graphics g) {
 		// drawing the score and checking if there is a point
 		int locX = (this.corX - 7) / BLOCK_SIZE;
 		int locY = (this.corY - 7) / BLOCK_SIZE;
@@ -321,17 +302,8 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 
 			score.setText("SCORE: " + scoreCounter++);
 		}
-		
-		// drawing ghosts:
-		g.drawImage(ghost[0], ghostClass[0].getCorX(), ghostClass[0].getCorY(), this);
-		g.drawImage(ghost[1], ghostClass[1].getCorX(), ghostClass[1].getCorY(), this);
-		
-		// drawing hears
-		int heartOffset =pointsOffset*3;
-		for (int i = 0; i < lives; i++) {
-			g.drawImage(hearts.get(i),(i+7) *BLOCK_SIZE, SCREEN_SIZE+ heartOffset, this);
-		}
 	}
+
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -342,17 +314,47 @@ public class PacmanBoard extends JPanel implements ActionListener, MovementConne
 	// pacmanBoard
 	@Override
 	public void setCoordinates(int x, int y) {
-
 		this.corX = x;
 		this.corY = y;
 		repaint();
-
 	}
-	
-	public static void removeHeart() {
-		lives--;
+
+	// if we have more lives, we remove one, otherwise, game is over
+
+	public void removeHeart() {
 		if(hearts.size()>0)
-		hearts.remove(hearts.size()-1);
+			hearts.remove(hearts.size()-1);
+	}
+
+
+	/*
+	 * Inner class that is responsible for catching the collision between the ghosts and the Pacman player.
+	 * It implements runnable because we want the thread to always check the position of all ghosts vs the Pacman and detect a collision
+	 */
+	private class collisonCheck implements Runnable{
+
+		@Override
+		public void run() {
+			while(true) {
+				for (int i = 0; i < ghostClass.length; i++) {
+					//System.out.println("");
+					if (ghostClass[i].getCorX() == corX && ghostClass[i].getCorY()==corY)
+					{
+						// A Collision!
+						System.out.println("Collision");
+						lives--;
+						removeHeart();
+						try {
+							Thread.sleep(300); // small sleep in order not to the detect the same position
+						}
+						catch(Exception ex) {
+							System.out.println("exception");
+						}	
+					}
+				}
+			}	
+		}
+
 	}
 
 }

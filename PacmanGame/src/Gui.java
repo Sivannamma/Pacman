@@ -10,11 +10,16 @@ public class Gui  extends JFrame {
 
 	// constructor : 
 	Gui() {
+		
 		initWindow(); // calling the initWindow(); function in order to start our window.
 	}
 
 	private void initWindow() {
-		add(new PacmanBoard(24,15)); // calling the PacmanBoard class
+		ReadFromFile g = new ReadFromFile("file.txt");
+		int [] board = g.convertFileToIntArray();
+		int cellSize = 24;
+		int matSize = (int)(Math.sqrt(board.length));
+		add(new PacmanBoard(cellSize,matSize, board)); // calling the PacmanBoard class
 
 		setResizable(false); // setting to be un-resizeable 
 		pack(); // The pack() method is defined in Window class in Java and it sizes the frame so that all its contents are at or above their preferred sizes.

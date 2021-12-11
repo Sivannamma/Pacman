@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 /*
  * This class is used by ghost who's chasing the Pacman by certain radios.
- * If the Pacman is not within the radios , then the ghost patrols
+ * If the Pacman is not within the radios , then the ghost is static at certain position
  * If the Pacman within the radios , then the path for the ghost is the Pacman position
  */
 public class ChasingNearBy implements ChaseBehaviour {
@@ -36,7 +36,7 @@ public class ChasingNearBy implements ChaseBehaviour {
 	public ArrayList<Point> chase(Point start, IGraph graph) {
 		this.graph = graph;
 		this.start = start;
-		chaseRadius= 5;
+		chaseRadius= 2;
 		return new BFS(start , destination() , graph).performBFS();
 	}
 

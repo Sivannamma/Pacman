@@ -1,0 +1,8 @@
+
+public class ReadFromFile {
+	String name;
+	public ReadFromFile(String name) {
+		this.name = name;
+	}
+
+}
