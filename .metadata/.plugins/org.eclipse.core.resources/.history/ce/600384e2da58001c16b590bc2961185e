@@ -1,0 +1,22 @@
+import java.util.ArrayList;
+
+public class Patrol implements ChaseBehaviour {
+	private Point [][] points; // our points array (represent the game area)
+	private IGraph graph;
+	Patrol(){
+		
+	}
+	
+	@Override
+	public ArrayList<Point> chase(Point start, IGraph graph) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Point destination() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

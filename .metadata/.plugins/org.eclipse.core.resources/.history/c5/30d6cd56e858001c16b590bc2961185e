@@ -1,0 +1,89 @@
+import java.util.ArrayList;
+/*
+ * This class is used by ghost who's chasing the Pacman by certain radios.
+ * If the Pacman is not within the radios , then the ghost patrols
+ * If the Pacman within the radios , then the path for the ghost is the Pacman position
+ */
+public class ChasingNearBy implements ChaseBehaviour {
+	private Point [][] points; // our points array (represent the game area)
+	private IGraph graph;
+	private Point startPosition;
+	private Point des ;
+	private Point start;
+
+	private Boolean firstEntrence;
+
+
+	// Pacman position :
+	private static int pacX;
+	private static int pacY;
+	private int chaseRadius;
+	ChasingNearBy(){
+		firstEntrence = true;
+	}
+
+	// getting the exact coordinates of the Pacman
+	public static void setCoordinates(int corX, int corY) {
+		pacX = corX;
+		pacY = corY;
+	}
+
+
+	@Override
+	public ArrayList<Point> chase(Point start, IGraph graph) {
+		this.graph = graph;
+		this.start = start;
+		chaseRadius= 1;
+		return new BFS(start , destination() , graph).performBFS();
+	}
+
+	private boolean pacmanInRadius() {
+
+		for (int i = start.getIndRow() - chaseRadius; i <= start.getIndRow() +chaseRadius ; i++) {
+			for (int j = start.getIndCol() - chaseRadius; j <= start.getIndCol() +chaseRadius ; j++) {
+				if(i< points.length && j < points.length)
+				{
+					// if its the same coordinates, it means the pacman is within the radius.
+					if(pacX== i && pacY==j) {
+						System.out.println("yes");
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public Point destination() {
+		points = (Point[][]) graph.getGraph();
+		// checking the radius of the Pacman in order to determine which state should the ghost perform.
+		if (pacmanInRadius())
+			des = points[(pacY-7)/PacmanBoard.BLOCK_SIZE][(pacX-7)/PacmanBoard.BLOCK_SIZE];
+
+		// if its not in the radius -> start patrol
+		else {
+			if(firstEntrence) {
+				firstEntrence = false;
+				startPosition = start;
+				des = randomizePoint();
+			}
+			// if the ghost reaches the destination, then we set its path to go to the start
+			if(start==des) {
+				des = startPosition;
+				startPosition = start;
+			}
+		}
+		return des;
+	}
+
+
+	public Point randomizePoint() {
+		// random points for the patrol.
+		int endX = (int) (Math.random() * PacmanBoard.BLOCK_SIZE);
+		int startX = (int) (Math.random() * PacmanBoard.BLOCK_SIZE);
+		Point end = points[startX][endX];
+		return end;
+	}
+
+}

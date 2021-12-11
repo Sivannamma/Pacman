@@ -1,0 +1,13 @@
+import java.util.ArrayList;
+
+/*
+ * ChasingBFS class is used by the ghost chasing the pacman
+ */
+public class ChasingBFS implements ChaseBehaviour {
+
+	@Override
+	public ArrayList<Point> chase(Point start, Point end, IGraph graph) {
+
+		return new BFS(start , end , graph).performBFS();
+	}
+}

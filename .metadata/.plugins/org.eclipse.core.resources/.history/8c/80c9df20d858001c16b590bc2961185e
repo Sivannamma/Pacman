@@ -1,0 +1,74 @@
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+/*
+ * In order to handle our player movement
+ */
+public class KeyController extends KeyAdapter  {
+
+	private boolean left;
+	private boolean right;
+	private boolean up;
+	private boolean down;
+	
+	
+	// Functions to get the direction from the PacmanBoard class : 
+    public boolean isLeft() {
+		return left;
+	}
+
+	public boolean isRight() {
+		return right;
+	}
+
+	public boolean isUp() {
+		return up;
+	}
+
+	public boolean isDown() {
+		return down;
+	}
+	
+	//To handle key pressing : 
+
+	@Override
+    public void keyPressed(KeyEvent e) {
+
+        int key = e.getKeyCode();
+        if (key == KeyEvent.VK_LEFT) left = true;
+        if (key == KeyEvent.VK_RIGHT) right = true;
+        if (key == KeyEvent.VK_UP) up = true;
+        if (key == KeyEvent.VK_DOWN) down = true;
+
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+//        wasUp = false;
+//        wasDown = false;
+//        wasRight = false;
+//        wasLeft = false;
+
+
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            left = false;
+           // wasLeft = true;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            right = false;
+          //  wasRight = true;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_UP) {
+            up = false;
+           // wasUp = true;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            down = false;
+           // wasDown = true;
+        }
+
+    }
+
+
+}

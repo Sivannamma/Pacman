@@ -1,0 +1,11 @@
+import java.util.ArrayList;
+
+public class ChasingNearBy implements ChaseBehaviour {
+
+	@Override
+	public ArrayList<Point> chase(Point start, Point end, IGraph<?, ?> graph) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

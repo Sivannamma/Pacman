@@ -1,0 +1,34 @@
+import java.util.ArrayList;
+
+/*
+ * ChasingBFS class is used by the ghost chasing the Pacman
+ * start -> position of the ghost
+ * end -> position of the player
+ */
+public class ChasingBFS implements ChaseBehaviour {
+	
+	private static int pacX;
+	private static int pacY;
+
+	@Override
+	public ArrayList<Point> chase(Point start, Point end, IGraph graph) {
+
+		return new BFS(start , end , graph).performBFS();
+	}
+
+	@Override
+	public Point destination(IGraph<?, ?> graph) {
+		if (graph instanceof PacmanGraph) {
+			points = ((PacmanGraph) graph).getGraph();
+		}
+	Point des = points[(pacY-7)/PacmanBoard.BLOCK_SIZE][(pacX-7)/PacmanBoard.BLOCK_SIZE];
+		return null;
+	}
+	
+	// static function that will perform on all ghosts.
+	public static void setCoordinates(int corX, int corY) {
+		pacX = corX;
+		pacY = corY;
+	}
+
+}

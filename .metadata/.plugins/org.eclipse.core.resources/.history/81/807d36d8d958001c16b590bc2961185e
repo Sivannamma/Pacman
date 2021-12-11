@@ -1,0 +1,90 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class BFS {
+
+	// start position 
+	Point start;
+	// end position
+	Point end;
+	// our graph
+	IGraph graph;
+
+	// queue for bfs, holds the next nodes we need to achieve
+	private Queue<Point> queue;
+	// holds the nodes that we already visited
+	private HashSet<Point> blackend;
+	// holds the course for us at the end
+	private	HashMap<Point, Point> previous;
+	// will hold our moves , from the bfs
+	private ArrayList<Point> path;
+
+	final int MAX_ITERATIONS = 500;
+
+	 BFS(Point start, Point end, IGraph graph) {
+		this.start = start;
+		this.end = end;
+		this.graph= graph;
+
+		// initializing
+		this.queue = new LinkedList<>();
+		this.blackend = new HashSet<>();
+		this.previous = new HashMap<>();
+		this.path=new ArrayList<Point>();
+	}
+
+	public ArrayList<Point> performBFS() {
+		clearBFS(); // each bfs we clear our list
+
+		queue.add(start);
+        blackend.add(start);
+
+        // as long as we have more nodes to reach :
+        while (!queue.isEmpty()) {
+
+        	// getting the current node we want to work on
+            Point current = queue.poll();
+
+            // reached the destination
+            if (current == end) {
+                path.add(end);
+
+                while (previous.containsKey(current)) {
+                    current = previous.get(current);
+                    path.add(current);
+                }
+
+                Collections.reverse(path);
+                break;
+            } else {
+                HashMap<String, Point> neighbors = graph.neighbors(current);
+                for (Point p : neighbors.values()) {
+                    if (blackend.contains(p)) {
+                        continue;
+                    }
+                    queue.add(p);
+                    blackend.add(p);
+                    previous.put(p, current);
+                }
+            }
+        }
+
+        return path;
+
+	}
+
+
+	/*
+	 * clearning the content before we use this for bfs function
+	 */
+	private void clearBFS() {
+		queue.clear();
+		blackend.clear();
+		previous.clear();
+		path.clear();
+	}
+}

@@ -1,0 +1,3 @@
+INDEX VERSION 1.131+C:\Users\ASUS\PacmanGame\.metadata\.plugins\org.eclipse.jdt.core
+417149856.index
+1671692264.index

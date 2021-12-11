@@ -1,0 +1,34 @@
+import java.util.HashMap;
+
+public class PacmanGraph implements IGraph<String, Point> {
+	Point [][] graph;
+	public PacmanGraph(Point[][] mat) {
+		graph = mat ; // shallow copy because want to change the changes to appear if happens
+	}
+	
+	@Override
+	public HashMap<String, Point> neighbors(Point node) {
+		HashMap<String, Point> nei = new HashMap<String, Point>();
+		
+		// UP
+		if(node.getIndRow()-1 >= 0 && graph[node.getIndRow()-1][node.getIndCol()].isWalkable()) // it means we can walk up
+			nei.put("UP", graph[node.getIndRow()-1][node.getIndCol()]);
+		// DOWN
+		if(node.getIndRow()+1 < graph.length && graph[node.getIndRow()+1][node.getIndCol()].isWalkable()) // it means we can down down
+			nei.put("DOWN", graph[node.getIndRow()+1][node.getIndCol()]);
+		// LEFT
+		if(node.getIndCol()-1 >= 0 && graph[node.getIndRow()][node.getIndCol()-1].isWalkable()) // it means we can walk left
+			nei.put("LEFT", graph[node.getIndRow()][node.getIndCol()-1]);
+		// RIGHT
+		if(node.getIndCol()+1 < graph.length && graph[node.getIndRow()][node.getIndCol()+1].isWalkable()) // it means we can walk right
+			nei.put("RIGHT", graph[node.getIndRow()][node.getIndCol()+1]);
+
+		
+		return nei;
+	}
+
+	public Point[][] getGraph() {
+		return this.graph;
+	}
+
+}
